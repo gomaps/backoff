@@ -75,6 +75,7 @@ type ExponentialBackOffWithRetries struct {
 // stop after maxRetries attempts at the operation
 func NewExponentialBackOffWithRetries(maxRetries int) *ExponentialBackOffWithRetries {
 	b := NewExponentialBackOff()
+	b.MaxElapsedTime = 0
 	return &ExponentialBackOffWithRetries{
 		b,
 		0,
