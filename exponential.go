@@ -65,6 +65,33 @@ type ExponentialBackOff struct {
 	startTime       time.Time
 }
 
+type ExponentialBackOffWithRetries struct {
+	*ExponentialBackOff
+	currentRetries int
+	MaxRetries     int
+}
+
+// If MaxElapsedTime is not specified, then ExponentialBackOffWithRetries will
+// stop after maxRetries attempts at the operation
+func NewExponentialBackOffWithRetries(maxRetries int) *ExponentialBackOffWithRetries {
+	b := NewExponentialBackOff()
+	return &ExponentialBackOffWithRetries{
+		b,
+		0,
+		maxRetries,
+	}
+}
+
+func (b *ExponentialBackOffWithRetries) NextBackOff() time.Duration {
+	d := b.ExponentialBackOff.NextBackOff()
+	b.currentRetries++
+
+	if b.MaxElapsedTime == 0 && b.currentRetries >= b.MaxRetries {
+		return Stop
+	}
+	return d
+}
+
 // Clock is an interface that returns current time for BackOff.
 type Clock interface {
 	Now() time.Time
