@@ -87,7 +87,7 @@ func (b *ExponentialBackOffWithRetries) NextBackOff() time.Duration {
 	d := b.ExponentialBackOff.NextBackOff()
 	b.currentRetries++
 
-	if b.MaxElapsedTime == 0 && b.currentRetries >= b.MaxRetries {
+	if b.MaxElapsedTime == 0 && b.currentRetries > b.MaxRetries {
 		return Stop
 	}
 	return d
